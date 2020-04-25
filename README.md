@@ -4,7 +4,7 @@
 
 ## Detalles
 
-A sitemap is basically a map of all of the pages within a specific domain. They are used by search engines and other tools to inform them of all of the pages on your domain.
+Un mapa del sitio es básicamente un mapa de todas las páginas dentro de un dominio específico. Los usan los motores de búsqueda y otras herramientas para informarles de todas las páginas de su dominio.
 
 Una forma de construirlos es visitando primero la página raíz del sitio web y haciendo una lista de cada enlace en esa página que vaya a una página en el mismo dominio. Por ejemplo, en`calhoun.io` puede encontrar un enlace a `calhoun.io/hire-me/` junto con varios otros enlaces.
 
