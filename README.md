@@ -2,17 +2,17 @@
 
 [![exercise status: released](https://img.shields.io/badge/exercise%20status-released-green.svg?style=for-the-badge)](https://gophercises.com/exercises/sitemap)
 
-## Exercise details
+## Detalles
 
 A sitemap is basically a map of all of the pages within a specific domain. They are used by search engines and other tools to inform them of all of the pages on your domain.
 
-One way these can be built is by first visiting the root page of the website and making a list of every link on that page that goes to a page on the same domain. For instance, on `calhoun.io` you might find a link to `calhoun.io/hire-me/` along with several other links.
+Una forma de construirlos es visitando primero la página raíz del sitio web y haciendo una lista de cada enlace en esa página que vaya a una página en el mismo dominio. Por ejemplo, en`calhoun.io` puede encontrar un enlace a `calhoun.io/hire-me/` junto con varios otros enlaces.
 
-Once you have created the list of links, you could then visit each and add any new links to your list. By repeating this step over and over you would eventually visit every page that on the domain that can be reached by following links from the root page.
+Una vez que haya creado la lista de enlaces, puede visitar cada uno y agregar nuevos enlaces a su lista. Al repetir este paso una y otra vez, eventualmente visitaría todas las páginas del dominio a las que se puede acceder siguiendo los enlaces desde la página raíz.
 
-In this exercise your goal is to build a sitemap builder like the one described above. The end user will run the program and provide you with a URL (*hint - use a flag or a command line arg for this!*) that you will use to start the process.
+En este ejercicio, su objetivo es crear un creador de mapas de sitio como el descrito anteriormente. El usuario final ejecutará el programa y le proporcionará una URL. (*hint - use a flag or a command line arg for this!*) que usarás para comenzar el proceso.
 
-Once you have determined all of the pages of a site, your sitemap builder should then output the data in the following XML format:
+Una vez que haya determinado todas las páginas de un sitio, el creador de su mapa del sitio debería generar los datos en el siguiente formato XML:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -28,17 +28,17 @@ Once you have determined all of the pages of a site, your sitemap builder should
 
 *Note: This should be the same as the [standard sitemap protocol](https://www.sitemaps.org/index.html)*
 
-Where each page is listed in its own `<url>` tag and includes the `<loc>` tag inside of it.
+Donde cada página se enumera en su propio `<url>` etiqueta e incluye el `<loc>`etiqueta dentro de ella.
 
-In order to complete this exercise I highly recommend first doing the [link parser exercise](https://github.com/gophercises/link) and using the package created in it to parse your HTML pages for links.
+Para completar este ejercicio, recomiendo hacer primero [link parser exercise](https://github.com/gophercises/link) y usar el paquete creado en él para analizar sus páginas HTML para enlaces.
 
-From there you will likely need to figure out a way to determine if a link goes to the same domain or a different one. If it goes to a different domain we shouldn't include it in our sitemap builder, but if it is the same domain we should. Remember that links to the same domain can be in the format of `/just-the-path` or `https://domain.com/with-domain`, but both go to the same domain.
+A partir de ahí, es probable que necesite encontrar una manera de determinar si un enlace va al mismo dominio o a uno diferente. Si va a un dominio diferente, no deberíamos incluirlo en nuestro generador de mapas de sitio, pero si es el mismo dominio, deberíamos hacerlo. Recuerde que los enlaces al mismo dominio pueden tener el formato de `/just-the-path` o `https://domain.com/with-domain`, pero ambos van al mismo dominio.
 
 ### Notes
 
-**1. Be aware that links can be cyclical.**
+**1. Tenga en cuenta que los enlaces pueden ser cíclicos.**
 
-That is, page `abc.com` may link to page `abc.com/about`, and then the about page may link back to the home page (`abc.com`). These cycles can also occur over many pages, for instance you might have:
+Es decir, página`abc.com` may link to page `abc.com/about`, y luego la página acerca puede volver a la página de inicio (`abc.com`). Estos ciclos también pueden ocurrir en muchas páginas, por ejemplo, puede tener:
 
 ```
 /about -> /contact
@@ -47,37 +47,37 @@ That is, page `abc.com` may link to page `abc.com/about`, and then the about pag
 /testimonials -> /about
 ```
 
-Where the cycle takes 4 links to finally reach it, but there is indeed a cycle.
+Donde el ciclo toma 4 enlaces para finalmente alcanzarlo, pero de hecho hay un ciclo.
 
-This is important to remember because you don't want your program to get into an infinite loop where it keeps visiting the same few pages over and over. If you are having issues with this, the bonus exercise might help temporarily alleviate the problem but we will cover how to avoid this entirely in the screencasts for this exercise.
+Es importante recordar esto porque no desea que su programa entre en un bucle infinito donde sigue visitando las mismas páginas una y otra vez. Si tiene problemas con esto, el ejercicio de bonificación puede ayudar a aliviar el problema temporalmente, pero cubriremos cómo evitarlo por completo en las transmisiones de pantalla para este ejercicio.
 
+**2. Los siguientes paquetes serán útiles ...**
 
-**2. The following packages will be helpful...**
+- [net/http](https://golang.org/pkg/net/http/) -para iniciar solicitudes GET a cada página en su mapa del sitio y obtener el HTML en esa página
+- la rama `solución` de [github.com/gophercises/link](https://github.com/gophercises/link) - no podrá "go get" este paquete porque no está comprometido con master, pero si completa el ejercicio localmente, puede usar el código de él en este ejercicio. Si esto causa confusión o problemas, ¡te ayudaré a descubrir cómo hacer todo esto!<jon@calhoun.io>
 
-- [net/http](https://golang.org/pkg/net/http/) - to initiate GET requests to each page in your sitemap and get the HTML on that page
-- the `solution` branch of [github.com/gophercises/link](https://github.com/gophercises/link) - you won't be able to `go get` this package because it isn't committed to master, but if you complete the exercise locally you can use the code from it in this exercise. If this causes confusion or issues reach out and I'll help you figure out how to do all of this! <jon@calhoun.io>
-- [encoding/xml](https://golang.org/pkg/encoding/xml/) - to print out the XML output at the end
-- [flag](https://golang.org/pkg/flag/) - to parse user provided flags like the website domain
+- [encoding/xml](https://golang.org/pkg/encoding/xml/) -para imprimir la salida XML al final
+- [flag](https://golang.org/pkg/flag/) - analizar indicadores proporcionados por el usuario como el dominio del sitio web
 
-I'm probably missing a few packages here so don't worry if you are using others. This is just a rough list of packages I expect to use myself  when I code this for the screencasts 😁
+Probablemente me faltan algunos paquetes aquí, así que no se preocupe si está utilizando otros. Esta es solo una lista aproximada de paquetes que espero usar cuando codifique la solución 😁
 
 ## Bonus
 
-As a bonus exercises you can also add in a `depth` flag that defines the maximum number of links to follow when building a sitemap. For instance, if you had a max depth of 3 and the following links:
+Como ejercicios de bonificación también puede agregar un `depth` bandera que define el número máximo de enlaces a seguir al crear un mapa del sitio. Por ejemplo, si tenía una profundidad máxima de 3 y los siguientes enlaces:
 
 ```
 a->b->c->d
 ```
 
-Then your sitemap builder would not visit or include `d` because you must follow more than 3 links to to get to the page.
+Entonces su creador de sitemaps no visitaría ni incluiría `d` porque debes seguir más de 3 enlaces para acceder a la página.
 
-On the other hand, if the links for the page were like this:
+Por otro lado, si los enlaces de la página fueran así:
 
 ```
 a->b->c->d
 b->d
 ```
 
-Where there is also a link to page `d` from page `b`, then your sitemap builder should include `d` because it can be reached in 3 links.
+Donde también hay un enlace a la página `d` De la página `b`,entonces su creador de sitemaps debe incluir `d` porque se puede acceder en 3 enlaces.
 
 *Hint - I find using a BFS ([breadth-first search](https://en.wikipedia.org/wiki/Breadth-first_search)) is the best way to achieve this bonus exercise without doing extra work, but it isn't required and you could likely come up with a working solution without using a BFS.*
