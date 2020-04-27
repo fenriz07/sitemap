@@ -8,54 +8,68 @@ import (
 	"strings"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/fenriz07/link"
+	link "github.com/fenriz07/link/students/fenriz"
 	"github.com/fenriz07/sitemap/helpers"
 	//"github.com/fenriz07/link"
 )
 
-type site struct {
-	Href      string
-	childrens []site
-}
-
-func (s *site) setChildren(pages []string) {
-
-	childrens := []site{}
-
-	for _, p := range pages {
-
-		siteStruct := site{
-			Href: p,
-		}
-
-		childrens = append(childrens, siteStruct)
-	}
-
-	s.childrens = childrens
-
-}
-
 func main() {
 
-	urlFlag := flag.String("url", "https://gophercises.com/", "domain to call")
+	urlFlag := flag.String("url", "https://www.mzzo.com/", "domain to call")
+
+	maxDepth := 4
 
 	flag.Parse()
 
-	index := site{Href: *urlFlag}
+	//index := site{Href: *urlFlag}
 
-	pages := get(*urlFlag)
+	pages := bfs(*urlFlag, maxDepth)
 
-	index.setChildren(pages)
+	//index.setChildren(pages)
 
-	for k, children := range index.childrens {
+	spew.Dump(pages)
 
-		pages := get(children.Href)
+}
 
-		index.childrens[k].setChildren(pages)
+//Algoritmo BFS
+func bfs(urlStr string, maxDepth int) []string {
+	seen := make(map[string]struct{})
+
+	var q map[string]struct{}
+	nq := map[string]struct{}{
+		urlStr: struct{}{},
 	}
 
-	spew.Dump(index)
+	for i := 0; i < maxDepth; i++ {
+		q, nq = nq, make(map[string]struct{})
 
+		for url, _ := range q {
+			/* con la linea # podemos comprobar si la llave existe en el mapa.
+			Si dicha llave existe quiere decir que la url fue analizada */
+
+			if _, ok := seen[url]; ok {
+				continue
+			}
+
+			/* Se le asigna el link que se va a analizar, para que no pueda ser analizado
+			en un futuro */
+			seen[url] = struct{}{}
+			links := get(url)
+
+			/*Se prepara nq con los valores obtenidos que posteriormente se analizaran*/
+			for _, link := range links {
+				nq[link] = struct{}{}
+			}
+		}
+	}
+
+	ret := make([]string, 0, len(seen))
+
+	for url, _ := range seen {
+		ret = append(ret, url)
+	}
+
+	return ret
 }
 
 func get(urlStr string) []string {
