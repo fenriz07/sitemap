@@ -99,9 +99,6 @@ func bfs(urlStr string, maxDepth int) []string {
 	for i := 0; i < maxDepth; i++ {
 		q, nq = nq, make(map[string]struct{})
 
-		linkChanel := make(chan []string)
-		lenchanel := 0
-
 		for url, _ := range q {
 			/* con la linea # podemos comprobar si la llave existe en el mapa.
 			Si dicha llave existe quiere decir que la url fue analizada */
@@ -110,31 +107,18 @@ func bfs(urlStr string, maxDepth int) []string {
 				continue
 			}
 
-			lenchanel++
-
 			/* Se le asigna el link que se va a analizar, para que no pueda ser analizado
 			en un futuro */
 			seen[url] = struct{}{}
 
-			go func() {
-				links := get(url)
-
-				linkChanel <- links
-			}()
+			links := get(url)
 
 			/*Se prepara nq con los valores obtenidos que posteriormente se analizaran*/
-			/*for _, link := range links {
-				nq[link] = struct{}{}
-			}*/
-		}
-
-		for i := 0; i < lenchanel; i++ {
-			links := <-linkChanel
-
 			for _, link := range links {
 				nq[link] = struct{}{}
 			}
 		}
+
 	}
 
 	//Se obtiene el resultado

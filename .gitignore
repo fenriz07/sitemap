@@ -16,3 +16,5 @@
 # Ignore tmp files
 tmp/*
 
+sitemap.xml
+
