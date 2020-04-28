@@ -1,13 +1,14 @@
 package main
 
 import (
+	"encoding/xml"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
 
-	"github.com/davecgh/go-spew/spew"
 	link "github.com/fenriz07/link/students/fenriz"
 	"github.com/fenriz07/sitemap/helpers"
 	//"github.com/fenriz07/link"
@@ -27,8 +28,39 @@ func main() {
 
 	//index.setChildren(pages)
 
-	spew.Dump(pages)
+	//spew.Dump(pages)
 
+	printXML(pages)
+
+}
+
+type UrlSet struct {
+	XMLName xml.Name `xml:"urlset"`
+	Xmlns   string   `xml:"xmlns,attr"`
+	Urls    []Url
+}
+
+type Url struct {
+	XMLName xml.Name `xml:"url"`
+	Loc     string   `xml:"loc"`
+}
+
+func printXML(pages []string) {
+
+	urls := make([]Url, 0, len(pages))
+
+	for _, url := range pages {
+
+		urls = append(urls, Url{Loc: url})
+	}
+
+	urlset := UrlSet{
+		Xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9",
+		Urls:  urls,
+	}
+
+	out, _ := xml.MarshalIndent(urlset, " ", "  ")
+	fmt.Println(string(out))
 }
 
 //Algoritmo BFS
@@ -62,6 +94,8 @@ func bfs(urlStr string, maxDepth int) []string {
 			}
 		}
 	}
+
+	//Se obtiene el resultado
 
 	ret := make([]string, 0, len(seen))
 
