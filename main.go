@@ -1,12 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"encoding/xml"
 	"flag"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 
 	link "github.com/fenriz07/link/students/fenriz"
@@ -60,7 +61,23 @@ func printXML(pages []string) {
 	}
 
 	out, _ := xml.MarshalIndent(urlset, " ", "  ")
-	fmt.Println(string(out))
+
+	fo, err := os.Create("output.txt")
+	if err != nil {
+		panic(err)
+	}
+	w := bufio.NewWriter(fo)
+
+	if _, err := w.Write(string(out)); err != nil {
+		panic(err)
+	}
+	defer func() {
+		if err := fo.Close(); err != nil {
+			panic(err)
+		}
+	}()
+
+	//fmt.Println(string(out))
 }
 
 //Algoritmo BFS
