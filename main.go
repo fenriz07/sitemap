@@ -4,11 +4,13 @@ import (
 	"bufio"
 	"encoding/xml"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
+	"time"
 
 	link "github.com/fenriz07/link/students/fenriz"
 	"github.com/fenriz07/sitemap/helpers"
@@ -17,21 +19,21 @@ import (
 
 func main() {
 
-	urlFlag := flag.String("url", "https://www.mzzo.com/", "domain to call")
+	start := time.Now()
 
-	maxDepth := 4
+	urlFlag := flag.String("url", "https://jerseypedia.org/", "domain to call")
+
+	maxDepth := 2
 
 	flag.Parse()
 
-	//index := site{Href: *urlFlag}
-
 	pages := bfs(*urlFlag, maxDepth)
 
-	//index.setChildren(pages)
-
-	//spew.Dump(pages)
-
 	printXML(pages)
+
+	elapsed := time.Since(start)
+
+	fmt.Printf("Tiempo en ejecución: %v \n", elapsed)
 
 }
 
@@ -62,13 +64,18 @@ func printXML(pages []string) {
 
 	out, _ := xml.MarshalIndent(urlset, " ", "  ")
 
-	fo, err := os.Create("output.txt")
+	createFileXML(out)
+}
+
+func createFileXML(outputXml []byte) {
+
+	fo, err := os.Create("sitemap.xml")
 	if err != nil {
 		panic(err)
 	}
 	w := bufio.NewWriter(fo)
 
-	if _, err := w.Write(string(out)); err != nil {
+	if _, err := w.Write(outputXml); err != nil {
 		panic(err)
 	}
 	defer func() {
@@ -77,7 +84,9 @@ func printXML(pages []string) {
 		}
 	}()
 
-	//fmt.Println(string(out))
+	if err = w.Flush(); err != nil {
+		panic(err)
+	}
 }
 
 //Algoritmo BFS
@@ -92,6 +101,9 @@ func bfs(urlStr string, maxDepth int) []string {
 	for i := 0; i < maxDepth; i++ {
 		q, nq = nq, make(map[string]struct{})
 
+		linkChanel := make(chan []string)
+		lenchanel := 0
+
 		for url, _ := range q {
 			/* con la linea # podemos comprobar si la llave existe en el mapa.
 			Si dicha llave existe quiere decir que la url fue analizada */
@@ -100,12 +112,27 @@ func bfs(urlStr string, maxDepth int) []string {
 				continue
 			}
 
+			lenchanel++
+
 			/* Se le asigna el link que se va a analizar, para que no pueda ser analizado
 			en un futuro */
 			seen[url] = struct{}{}
-			links := get(url)
+
+			go func() {
+				links := get(url)
+
+				linkChanel <- links
+			}()
 
 			/*Se prepara nq con los valores obtenidos que posteriormente se analizaran*/
+			/*for _, link := range links {
+				nq[link] = struct{}{}
+			}*/
+		}
+
+		for i := 0; i < lenchanel; i++ {
+			links := <-linkChanel
+
 			for _, link := range links {
 				nq[link] = struct{}{}
 			}
