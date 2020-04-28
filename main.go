@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"encoding/xml"
 	"flag"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -20,8 +20,6 @@ import (
 func main() {
 
 	start := time.Now()
-	// Code to measure
-	duration := time.Since(start)
 
 	urlFlag := flag.String("url", "https://jerseypedia.org/", "domain to call")
 
@@ -33,8 +31,8 @@ func main() {
 
 	printXML(pages)
 
-	fmt.Printf("Tiempo en ejecución: %v \n", duration.Seconds())
-
+	elapsed := time.Since(start)
+	log.Printf("Time nano %s", elapsed)
 }
 
 type UrlSet struct {
