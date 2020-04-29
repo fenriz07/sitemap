@@ -21,7 +21,7 @@ func main() {
 
 	start := time.Now()
 
-	urlFlag := flag.String("url", "https://jerseypedia.org/", "domain to call")
+	urlFlag := flag.String("url", "https://www.mzzo.com/", "domain to call")
 
 	maxDepth := 2
 
@@ -118,11 +118,11 @@ func bfs(urlStr string, maxDepth int) []string {
 			en un futuro */
 			seen[url] = struct{}{}
 
-			go func() {
+			go func(url string) {
 				links := get(url)
 
 				linkChanel <- links
-			}()
+			}(url)
 
 			/*Se prepara nq con los valores obtenidos que posteriormente se analizaran*/
 			/*for _, link := range links {
@@ -137,6 +137,8 @@ func bfs(urlStr string, maxDepth int) []string {
 				nq[link] = struct{}{}
 			}
 		}
+
+		close(linkChanel)
 	}
 
 	//Se obtiene el resultado
